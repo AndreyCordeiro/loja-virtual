@@ -1,14 +1,16 @@
-package com.webstore.repository;
+package com.webstore.entity;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
 @Entity
-@Table(name = "categoria")
+@Table(name = "permissao")
+@Builder
 @Data
-public class Categoria implements Serializable {
+@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class Permissao extends Auditavel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")

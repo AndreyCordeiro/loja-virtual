@@ -1,14 +1,17 @@
-package com.webstore.repository;
+package com.webstore.entity;
 
-import lombok.Data;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
 
 @Entity
 @Table(name = "produto")
+@Builder
 @Data
-public class Produto implements Serializable {
+@NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class Produto extends Auditavel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -20,13 +23,18 @@ public class Produto implements Serializable {
     @Column(name = "descricao")
     private String descricao;
 
+    @Column(name = "valor_custo")
+    private Double valorCusto;
+
     @Column(name = "valor_venda")
     private Double valorVenda;
 
     @ManyToOne
-    private Fabricante fabricante;
+    @JoinColumn(name = "id_marca")
+    private Marca marca;
 
     @ManyToOne
+    @JoinColumn(name = "id_categoria")
     private Categoria categoria;
 
     @Column(name = "quantidade")
