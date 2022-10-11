@@ -36,7 +36,4 @@ public class Produto extends Auditavel {
     @ManyToOne
     @JoinColumn(name = "id_categoria")
     private Categoria categoria;
-
-    @Column(name = "quantidade")
-    private Double quantidade;
 }
