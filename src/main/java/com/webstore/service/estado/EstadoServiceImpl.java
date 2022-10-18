@@ -4,9 +4,11 @@ import com.webstore.entity.Estado;
 import com.webstore.exception.InfoException;
 import com.webstore.repository.EstadoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class EstadoServiceImpl implements EstadoService {
@@ -30,6 +32,12 @@ public class EstadoServiceImpl implements EstadoService {
 
     @Override
     public void excluir(Long id) throws InfoException {
+        Optional<Estado> estado = estadoRepository.findById(id);
 
+        if (estado.isPresent()) {
+            estadoRepository.delete(estado.get());
+        } else {
+            throw new InfoException("Estado não encontrado", HttpStatus.NOT_FOUND);
+        }
     }
 }

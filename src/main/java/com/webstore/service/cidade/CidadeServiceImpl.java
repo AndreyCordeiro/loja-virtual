@@ -4,9 +4,11 @@ import com.webstore.entity.Cidade;
 import com.webstore.exception.InfoException;
 import com.webstore.repository.CidadeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CidadeServiceImpl implements CidadeService {
@@ -30,6 +32,12 @@ public class CidadeServiceImpl implements CidadeService {
 
     @Override
     public void excluir(Long id) throws InfoException {
+        Optional<Cidade> cidade = cidadeRepository.findById(id);
 
+        if (cidade.isPresent()) {
+            cidadeRepository.delete(cidade.get());
+        } else {
+            throw new InfoException("Cidade não encontrada", HttpStatus.NOT_FOUND);
+        }
     }
 }
