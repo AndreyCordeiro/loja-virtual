@@ -3,6 +3,7 @@ package com.webstore.service.estado;
 import com.webstore.entity.Estado;
 import com.webstore.exception.InfoException;
 import com.webstore.repository.EstadoRepository;
+import com.webstore.util.UtilEstado;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -22,12 +23,31 @@ public class EstadoServiceImpl implements EstadoService {
 
     @Override
     public Estado inserir(Estado estado) throws InfoException {
-        return null;
+        if (UtilEstado.validarEstado(estado)) {
+            return estadoRepository.save(estado);
+        } else {
+            throw new InfoException("Ocorreu um erro ao cadastrar estado", HttpStatus.BAD_REQUEST);
+        }
     }
 
     @Override
     public Estado alterar(Long id, Estado estado) throws InfoException {
-        return null;
+        Optional<Estado> estadoOptional = estadoRepository.findById(id);
+
+        if (estadoOptional.isPresent()) {
+            Estado estadoBuilder = Estado.builder()
+                    .id(id)
+                    .nome(estado.getNome() != null ? estado.getNome() : null)
+                    .sigla(estado.getSigla() != null ? estado.getSigla() : null)
+                    .build();
+
+            if (UtilEstado.validarEstado(estadoBuilder)) {
+                estadoRepository.save(estadoBuilder);
+            }
+            return estadoBuilder;
+        } else {
+            throw new InfoException("Estado não encontrado", HttpStatus.NOT_FOUND);
+        }
     }
 
     @Override
