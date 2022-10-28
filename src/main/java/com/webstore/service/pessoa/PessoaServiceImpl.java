@@ -1,7 +1,9 @@
 package com.webstore.service.pessoa;
 
+import com.webstore.entity.Cidade;
 import com.webstore.entity.Pessoa;
 import com.webstore.exception.InfoException;
+import com.webstore.repository.CidadeRepository;
 import com.webstore.repository.PessoaRepository;
 import com.webstore.util.UtilPessoa;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,9 @@ public class PessoaServiceImpl implements PessoaService {
     @Autowired
     private PessoaRepository pessoaRepository;
 
+    @Autowired
+    private CidadeRepository cidadeRepository;
+
     @Override
     public List<Pessoa> buscarTodos() {
         return pessoaRepository.findAll();
@@ -23,35 +28,48 @@ public class PessoaServiceImpl implements PessoaService {
 
     @Override
     public Pessoa inserir(Pessoa pessoa) throws InfoException {
-        if (UtilPessoa.validarPessoa(pessoa)) {
-            return pessoaRepository.save(pessoa);
+        Optional<Cidade> optionalCidade = cidadeRepository.findById(pessoa.getCidade().getId());
+
+        if (optionalCidade.isEmpty()) {
+            throw new InfoException("Cidade não encontrada", HttpStatus.BAD_REQUEST);
         } else {
-            throw new InfoException("Ocorreu um erro ao cadastrar pessoa", HttpStatus.BAD_REQUEST);
+            if (UtilPessoa.validarPessoa(pessoa)) {
+                pessoa.setCidade(optionalCidade.get());
+
+                return pessoaRepository.save(pessoa);
+            } else {
+                throw new InfoException("Ocorreu um erro ao cadastrar pessoa", HttpStatus.BAD_REQUEST);
+            }
         }
     }
 
     @Override
     public Pessoa alterar(Long id, Pessoa pessoa) throws InfoException {
         Optional<Pessoa> pessoaOptional = pessoaRepository.findById(id);
+        Optional<Cidade> optionalCidade = cidadeRepository.findById(pessoa.getCidade().getId());
 
-        if (pessoaOptional.isPresent()) {
-            Pessoa pessoaBuilder = Pessoa.builder()
-                    .id(id)
-                    .nome(pessoa.getNome() != null ? pessoa.getNome() : null)
-                    .cpf(pessoa.getCpf() != null ? pessoa.getCpf() : null)
-                    .email(pessoa.getEmail() != null ? pessoa.getEmail() : null)
-                    .senha(pessoa.getSenha() != null ? pessoa.getSenha() : null)
-                    .endereco(pessoa.getEndereco() != null ? pessoa.getEndereco() : null)
-                    .cep(pessoa.getCep() != null ? pessoa.getCep() : null)
-                    .cidade(pessoa.getCidade() != null ? pessoa.getCidade() : null)
-                    .build();
-
-            if (UtilPessoa.validarPessoa(pessoaBuilder)) {
-                pessoaRepository.save(pessoaBuilder);
-            }
-            return pessoaBuilder;
+        if (optionalCidade.isEmpty()) {
+            throw new InfoException("Cidade não encontrada", HttpStatus.BAD_REQUEST);
         } else {
-            throw new InfoException("Pessoa não encontrada", HttpStatus.NOT_FOUND);
+            if (pessoaOptional.isPresent()) {
+                Pessoa pessoaBuilder = Pessoa.builder()
+                        .id(id)
+                        .nome(pessoa.getNome() != null ? pessoa.getNome() : null)
+                        .cpf(pessoa.getCpf() != null ? pessoa.getCpf() : null)
+                        .email(pessoa.getEmail() != null ? pessoa.getEmail() : null)
+                        .senha(pessoa.getSenha() != null ? pessoa.getSenha() : null)
+                        .endereco(pessoa.getEndereco() != null ? pessoa.getEndereco() : null)
+                        .cep(pessoa.getCep() != null ? pessoa.getCep() : null)
+                        .cidade(pessoa.getCidade() != null ? pessoa.getCidade() : null)
+                        .build();
+
+                if (UtilPessoa.validarPessoa(pessoaBuilder)) {
+                    pessoaRepository.save(pessoaBuilder);
+                }
+                return pessoaBuilder;
+            } else {
+                throw new InfoException("Pessoa não encontrada", HttpStatus.NOT_FOUND);
+            }
         }
     }
 

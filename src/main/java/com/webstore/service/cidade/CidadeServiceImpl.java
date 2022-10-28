@@ -1,8 +1,10 @@
 package com.webstore.service.cidade;
 
 import com.webstore.entity.Cidade;
+import com.webstore.entity.Estado;
 import com.webstore.exception.InfoException;
 import com.webstore.repository.CidadeRepository;
+import com.webstore.repository.EstadoRepository;
 import com.webstore.util.UtilCidade;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,6 +18,9 @@ public class CidadeServiceImpl implements CidadeService {
     @Autowired
     private CidadeRepository cidadeRepository;
 
+    @Autowired
+    private EstadoRepository estadoRepository;
+
     @Override
     public List<Cidade> buscarTodos() {
         return cidadeRepository.findAll();
@@ -23,30 +28,43 @@ public class CidadeServiceImpl implements CidadeService {
 
     @Override
     public Cidade inserir(Cidade cidade) throws InfoException {
-        if (UtilCidade.validarCidade(cidade)) {
-            return cidadeRepository.save(cidade);
+        Optional<Estado> estadoOptional = estadoRepository.findById(cidade.getEstado().getId());
+
+        if (estadoOptional.isEmpty()) {
+            throw new InfoException("Estado não encontrado", HttpStatus.BAD_REQUEST);
         } else {
-            throw new InfoException("Ocorreu um erro ao cadastrar cidade", HttpStatus.BAD_REQUEST);
+            if (UtilCidade.validarCidade(cidade)) {
+                cidade.setEstado(estadoOptional.get());
+
+                return cidadeRepository.save(cidade);
+            } else {
+                throw new InfoException("Ocorreu um erro ao cadastrar cidade", HttpStatus.BAD_REQUEST);
+            }
         }
     }
 
     @Override
     public Cidade alterar(Long id, Cidade cidade) throws InfoException {
         Optional<Cidade> cidadeOptional = cidadeRepository.findById(id);
+        Optional<Estado> estadoOptional = estadoRepository.findById(cidade.getEstado().getId());
 
-        if (cidadeOptional.isPresent()) {
-            Cidade cidadeBuilder = Cidade.builder()
-                    .id(id)
-                    .nome(cidade.getNome() != null ? cidade.getNome() : null)
-                    .estado(cidade.getEstado() != null ? cidade.getEstado() : null)
-                    .build();
-
-            if (UtilCidade.validarCidade(cidadeBuilder)) {
-                cidadeRepository.save(cidadeBuilder);
-            }
-            return cidadeBuilder;
+        if (estadoOptional.isEmpty()) {
+            throw new InfoException("Estado não encontrado", HttpStatus.BAD_REQUEST);
         } else {
-            throw new InfoException("Cidade não encontrada", HttpStatus.NOT_FOUND);
+            if (cidadeOptional.isPresent()) {
+                Cidade cidadeBuilder = Cidade.builder()
+                        .id(id)
+                        .nome(cidade.getNome() != null ? cidade.getNome() : null)
+                        .estado(cidade.getEstado() != null ? cidade.getEstado() : null)
+                        .build();
+
+                if (UtilCidade.validarCidade(cidadeBuilder)) {
+                    cidadeRepository.save(cidadeBuilder);
+                }
+                return cidadeBuilder;
+            } else {
+                throw new InfoException("Cidade não encontrada", HttpStatus.NOT_FOUND);
+            }
         }
     }
 
