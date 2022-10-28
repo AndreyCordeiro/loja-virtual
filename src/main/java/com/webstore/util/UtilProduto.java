@@ -6,6 +6,9 @@ import org.springframework.http.HttpStatus;
 
 public class UtilProduto {
     public static Boolean validarProduto(Produto produto) throws InfoException {
+        if (produto.getNome() == null || produto.getNome().equals("")) {
+            throw new InfoException("MESSAGE.NOME_REQUIRED", HttpStatus.BAD_REQUEST);
+        }
         if (produto.getDescricao() == null || produto.getDescricao().equals("")) {
             throw new InfoException("MESSAGE.DESCRICAO_REQUIRED", HttpStatus.BAD_REQUEST);
         }
