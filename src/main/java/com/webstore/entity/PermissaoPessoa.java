@@ -1,5 +1,6 @@
 package com.webstore.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -18,6 +19,7 @@ public class PermissaoPessoa extends Auditavel {
 
     @ManyToOne
     @JoinColumn(name = "id_pessoa")
+    @JsonIgnore
     private Pessoa pessoa;
 
     @ManyToOne

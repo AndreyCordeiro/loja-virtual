@@ -1,7 +1,10 @@
 package com.webstore.service.permissao;
 
 import com.webstore.entity.Permissao;
+import com.webstore.entity.PermissaoPessoa;
+import com.webstore.entity.Pessoa;
 import com.webstore.exception.InfoException;
+import com.webstore.repository.PermissaoPessoaRepository;
 import com.webstore.repository.PermissaoRepository;
 import com.webstore.util.UtilPermissao;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,9 @@ import java.util.Optional;
 public class PermissaoServiceImpl implements PermissaoService {
     @Autowired
     private PermissaoRepository permissaoRepository;
+
+    @Autowired
+    private PermissaoPessoaRepository permissaoPessoaRepository;
 
     @Override
     public List<Permissao> buscarTodos() {
@@ -55,6 +61,20 @@ public class PermissaoServiceImpl implements PermissaoService {
 
         if (permissao.isPresent()) {
             permissaoRepository.delete(permissao.get());
+        } else {
+            throw new InfoException("Permissão não encontrada", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    public void vincularPessoaPermissaoCliente(Pessoa pessoa) throws InfoException {
+        List<Permissao> listaPermissao = permissaoRepository.findByNome("CLIENTE");
+
+        if (listaPermissao != null && listaPermissao.size() > 0) {
+            PermissaoPessoa permissaoPessoa = new PermissaoPessoa();
+
+            permissaoPessoa.setPessoa(pessoa);
+            permissaoPessoa.setPermissao(listaPermissao.get(0));
+            permissaoPessoaRepository.save(permissaoPessoa);
         } else {
             throw new InfoException("Permissão não encontrada", HttpStatus.NOT_FOUND);
         }
