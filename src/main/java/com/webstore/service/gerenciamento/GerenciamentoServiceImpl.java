@@ -19,6 +19,7 @@ public class GerenciamentoServiceImpl implements GerenciamentoService {
     private EmailService emailService;
 
     //TODO FAZER VALIDAÇÃO NOS MÉTODOS
+    @Override
     public String solicitarCodigo(String email) {
         Pessoa pessoa = pessoaRepository.findByEmail(email);
 
@@ -32,6 +33,7 @@ public class GerenciamentoServiceImpl implements GerenciamentoService {
         return "Código Enviado!";
     }
 
+    @Override
     public String alterarSenha(Pessoa pessoa) {
         Pessoa pessoaBanco = pessoaRepository.findByEmailAndCodigoRecuperacaoSenha(pessoa.getEmail(), pessoa.getCodigoRecuperacaoSenha());
 
