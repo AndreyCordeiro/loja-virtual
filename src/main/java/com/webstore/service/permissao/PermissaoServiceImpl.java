@@ -6,6 +6,7 @@ import com.webstore.entity.Pessoa;
 import com.webstore.exception.InfoException;
 import com.webstore.repository.PermissaoPessoaRepository;
 import com.webstore.repository.PermissaoRepository;
+import com.webstore.util.Util;
 import com.webstore.util.UtilPermissao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -30,6 +31,8 @@ public class PermissaoServiceImpl implements PermissaoService {
     @Override
     public Permissao inserir(Permissao permissao) throws InfoException {
         if (UtilPermissao.validarPermissao(permissao)) {
+            permissao.setNome(Util.removerAcentos(permissao.getNome().toUpperCase()));
+
             return permissaoRepository.save(permissao);
         } else {
             throw new InfoException("Ocorreu um erro ao cadastrar permissão", HttpStatus.BAD_REQUEST);
