@@ -61,6 +61,7 @@ public class PessoaServiceImpl implements PessoaService {
                         .endereco(pessoa.getEndereco() != null ? pessoa.getEndereco() : null)
                         .cep(pessoa.getCep() != null ? pessoa.getCep() : null)
                         .cidade(pessoa.getCidade() != null ? pessoa.getCidade() : null)
+                        .permissaoPessoas(pessoa.getPermissaoPessoas() != null && pessoa.getPermissaoPessoas().size() > 0 ? pessoa.getPermissaoPessoas() : null)
                         .build();
 
                 if (UtilPessoa.validarPessoa(pessoaBuilder)) {
