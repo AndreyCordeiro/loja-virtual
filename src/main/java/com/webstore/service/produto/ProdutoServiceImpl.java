@@ -32,6 +32,17 @@ public class ProdutoServiceImpl implements ProdutoService {
     }
 
     @Override
+    public Produto buscarPorId(Long id) throws InfoException {
+        Optional<Produto> optionalProduto = produtoRepository.findById(id);
+
+        if (optionalProduto.isPresent()) {
+            return optionalProduto.get();
+        } else {
+            throw new InfoException("Produto não encontrado", HttpStatus.NOT_FOUND);
+        }
+    }
+
+    @Override
     public Produto inserir(Produto produto) throws InfoException {
         Optional<Categoria> categoriaOptional = categoriaRepository.findById(produto.getCategoria().getId());
         Optional<Marca> marcaOptional = marcaRepository.findById(produto.getMarca().getId());

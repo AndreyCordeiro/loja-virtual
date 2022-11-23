@@ -8,6 +8,8 @@ import java.util.List;
 public interface ProdutoService {
     List<Produto> buscarTodos();
 
+    Produto buscarPorId(Long id) throws InfoException;
+
     Produto inserir(Produto produto) throws InfoException;
 
     Produto alterar(Long id, Produto produto) throws InfoException;
