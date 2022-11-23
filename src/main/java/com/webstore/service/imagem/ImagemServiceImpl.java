@@ -5,12 +5,15 @@ import com.webstore.entity.Produto;
 import com.webstore.exception.InfoException;
 import com.webstore.repository.ImagemRepository;
 import com.webstore.repository.ProdutoRepository;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
@@ -27,6 +30,20 @@ public class ImagemServiceImpl implements ImagemService {
     @Override
     public List<Imagem> buscarTodos() {
         return imagemRepository.findAll();
+    }
+
+    @Override
+    public List<Imagem> buscarPorProdutoId(Long id) {
+        List<Imagem> listaProdutoImagens = imagemRepository.findByProdutoId(id);
+
+        for (Imagem produtoImagens : listaProdutoImagens) {
+            try (InputStream inputStream = new FileInputStream("D:\\Usuário\\ImagensPW\\" + produtoImagens.getNome())) {
+                produtoImagens.setArquivo(IOUtils.toByteArray(inputStream));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        return listaProdutoImagens;
     }
 
     @Override

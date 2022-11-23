@@ -22,4 +22,7 @@ public class Imagem extends Auditavel {
     @ManyToOne
     @JoinColumn(name = "id_produto")
     private Produto produto;
+
+    @Transient
+    private byte[] arquivo;
 }

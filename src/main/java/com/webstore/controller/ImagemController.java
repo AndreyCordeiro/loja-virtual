@@ -22,6 +22,11 @@ public class ImagemController {
         return imagemService.buscarTodos();
     }
 
+    @GetMapping("/produto/{id}")
+    public List<Imagem> buscarPorProdutoId(@PathVariable("id") Long id) {
+        return imagemService.buscarPorProdutoId(id);
+    }
+
     @PostMapping("/cadastrar")
     public Imagem inserir(@RequestParam("idProduto") Long idProduto, @RequestParam("arquivo") MultipartFile arquivo) throws InfoException, IOException {
         return imagemService.inserir(idProduto, arquivo);
