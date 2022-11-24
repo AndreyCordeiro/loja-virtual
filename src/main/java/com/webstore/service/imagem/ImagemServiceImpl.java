@@ -54,7 +54,7 @@ public class ImagemServiceImpl implements ImagemService {
         if (produtoOptional.isPresent()) {
             try {
                 if (!multipartFile.isEmpty()) {
-                    String nomeImagem = produtoOptional.get().getId() + multipartFile.getOriginalFilename();
+                    String nomeImagem = "produto_" + produtoOptional.get().getId() + "_" + multipartFile.getOriginalFilename();
                     Files.write(Paths.get("D:\\Usuário\\ImagensPW\\" + nomeImagem), multipartFile.getBytes());
 
                     imagem.setNome(nomeImagem);

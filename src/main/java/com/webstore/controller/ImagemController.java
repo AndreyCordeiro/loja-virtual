@@ -23,21 +23,25 @@ public class ImagemController {
     }
 
     @GetMapping("/produto/{id}")
+    @CrossOrigin("http://localhost:3000")
     public List<Imagem> buscarPorProdutoId(@PathVariable("id") Long id) {
         return imagemService.buscarPorProdutoId(id);
     }
 
     @PostMapping("/cadastrar")
+    @CrossOrigin("http://localhost:3000")
     public Imagem inserir(@RequestParam("idProduto") Long idProduto, @RequestParam("arquivo") MultipartFile arquivo) throws InfoException, IOException {
         return imagemService.inserir(idProduto, arquivo);
     }
 
     @PutMapping("/atualizar/{id}")
+    @CrossOrigin("http://localhost:3000")
     public Imagem alterar(@PathVariable("id") Long id, @RequestBody Imagem imagem) throws InfoException {
         return imagemService.alterar(id, imagem);
     }
 
     @DeleteMapping("/deletar/{id}")
+    @CrossOrigin("http://localhost:3000")
     public ResponseEntity<Void> excluir(@PathVariable("id") Long id) throws InfoException {
         imagemService.excluir(id);
         return ResponseEntity.ok().build();
