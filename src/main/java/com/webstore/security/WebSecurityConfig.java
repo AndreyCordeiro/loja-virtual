@@ -1,5 +1,6 @@
 package com.webstore.security;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -16,9 +17,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig {
 
-    //    @Autowired
-//    private AuthEntryPointJwt unauthorizedHandler;
-//
+    @Autowired
+    private AuthEntryPointJwt unauthorizedHandler;
+
     @Bean
     public AuthFilterToken authFilterToken() {
         return new AuthFilterToken();
@@ -37,6 +38,7 @@ public class WebSecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors().and().csrf().disable()
+                .exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeRequests().antMatchers("/api/gerenciamento/**").permitAll()
                 .antMatchers("/api/pessoa/**").hasAnyAuthority("ADMINISTRADOR")
