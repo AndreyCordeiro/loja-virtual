@@ -4,6 +4,7 @@ import com.webstore.entity.Pessoa;
 import com.webstore.repository.PessoaRepository;
 import com.webstore.service.email.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.text.DateFormat;
@@ -17,6 +18,9 @@ public class GerenciamentoServiceImpl implements GerenciamentoService {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     //TODO FAZER VALIDAÇÃO NOS MÉTODOS
     @Override
@@ -41,8 +45,7 @@ public class GerenciamentoServiceImpl implements GerenciamentoService {
             Date diferenca = new Date(new Date().getTime() - pessoaBanco.getDataEnvioCodigo().getTime());
 
             if (diferenca.getTime() / 1000 < 900) {
-                //TODO criptografar senha
-                pessoaBanco.setSenha(pessoa.getSenha());
+                pessoaBanco.setSenha(passwordEncoder.encode(pessoa.getSenha()));
                 pessoaBanco.setCodigoRecuperacaoSenha(null);
 
                 pessoaRepository.save(pessoaBanco);
