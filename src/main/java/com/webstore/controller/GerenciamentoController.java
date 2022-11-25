@@ -40,6 +40,7 @@ public class GerenciamentoController {
     }
 
     @PostMapping("/login")
+    @CrossOrigin("http://localhost:3000")
     public ResponseEntity<?> login(@RequestBody Pessoa pessoa) {
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(pessoa.getEmail(), pessoa.getSenha()));
         SecurityContextHolder.getContext().setAuthentication(authentication);
